@@ -6,6 +6,13 @@ import tyro
 
 from colab_demo.utils import plot_results
 
+# Check if running in Colab
+import sys
+IN_COLAB = 'google.colab' in sys.modules
+
+if IN_COLAB:
+    from google.colab import output
+    output.enable_custom_widget_manager()
 
 @dataclass
 class Args:
@@ -37,4 +44,8 @@ def main(args: Args):
 
 
 if __name__ == "__main__":
+    if IN_COLAB:
+        # Use inline backend for Colab
+        import matplotlib_inline
+        matplotlib_inline.backend_inline.set_matplotlib_formats('retina')
     tyro.cli(main)
