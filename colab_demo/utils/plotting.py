@@ -6,5 +6,5 @@ def plot_results(array: np.ndarray, title: str = "Cumulative Sum") -> None:
     x_vals = np.arange(len(array))
     plt.plot(x_vals, array)
     plt.title(title)
-    plt.xlabel("Index")
-    plt.ylabel("Value")
+    plt.xlabel("Array value")
+    plt.ylabel("Cumulative value")

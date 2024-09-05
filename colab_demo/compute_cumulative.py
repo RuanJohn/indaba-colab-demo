@@ -12,24 +12,24 @@ class Args:
     num_elements: int = 100  # Default value if not specified
 
 
-def cumulative_sum(array: np.ndarray) -> np.ndarray:
-    cumulative_sum = []
+def compute_cumulative_result(array: np.ndarray) -> np.ndarray:
+    cumulative_result = []
 
     for i, element in enumerate(array):
-        if len(cumulative_sum) == 0:
-            cumulative_sum.append(element)
+        if len(cumulative_result) == 0:
+            cumulative_result.append(element)
         else:
-            cumulative_sum.append(cumulative_sum[-1] + element)
+            cumulative_result.append(cumulative_result[-1] + element)
 
         if i % 10 == 0:
-            print(f"Current cumulative sum: {cumulative_sum[-1]}")
+            print(f"Current cumulative sum: {cumulative_result[-1]}")
 
-    return np.array(cumulative_sum)
+    return np.array(cumulative_result)
 
 
 def main(args: Args):
-    array_to_sum = np.random.randint(0, 10, args.num_elements)
-    cumulative_arr_sum = cumulative_sum(array_to_sum)
+    array_to_sum = np.random.randint(-100, 100, args.num_elements) + 1e-6 # add a small value to exclude zeros.
+    cumulative_arr_sum = compute_cumulative_result(array_to_sum)
 
     print(f"Final cumulative sum: {cumulative_arr_sum[-1]}")
     plot_results(cumulative_arr_sum)
