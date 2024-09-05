@@ -146,3 +146,6 @@ logs
 
 # act: for testing github workflows
 bin/act
+
+# figures
+*.png
