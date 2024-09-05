@@ -18,7 +18,6 @@ if IN_COLAB:
 class Args:
     num_elements: int = 100  # Default value if not specified
 
-
 def compute_cumulative_result(array: np.ndarray) -> np.ndarray:
     cumulative_result = []
 
@@ -33,15 +32,23 @@ def compute_cumulative_result(array: np.ndarray) -> np.ndarray:
 
     return np.array(cumulative_result)
 
-
 def main(args: Args):
     array_to_sum = np.random.randint(-100, 100, args.num_elements) + 1e-6 # add a small value to exclude zeros.
     cumulative_arr_sum = compute_cumulative_result(array_to_sum)
 
     print(f"Final cumulative sum: {cumulative_arr_sum[-1]}")
+    
+    # Create a new figure
+    plt.figure(figsize=(10, 6))
     plot_results(cumulative_arr_sum)
-    plt.show()
-
+    
+    if IN_COLAB:
+        # Display the plot inline in Colab
+        from IPython.display import display
+        display(plt.gcf())
+    else:
+        # Show the plot in a new window for local environments
+        plt.show()
 
 if __name__ == "__main__":
     if IN_COLAB:
