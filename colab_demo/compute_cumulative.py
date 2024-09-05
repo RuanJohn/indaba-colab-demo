@@ -48,11 +48,12 @@ def main(args: Args):
         display(plt.gcf())
     else:
         # Show the plot in a new window for local environments
-        plt.show()
+        plt.show(block=True)
+    
+    print("Plot displayed. Close the plot window to end the program.")
 
 if __name__ == "__main__":
     if IN_COLAB:
-        # Use inline backend for Colab
         import matplotlib_inline
         matplotlib_inline.backend_inline.set_matplotlib_formats('retina')
     tyro.cli(main)
