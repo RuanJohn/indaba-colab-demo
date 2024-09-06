@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 
+import jax
 import matplotlib.pyplot as plt
-import numpy as np
 import tyro
 
-from colab_demo.utils import plot_results
+from colab_demo.utils.plotting import plot_results
 
 
 @dataclass
@@ -13,36 +13,48 @@ class Args:
     output_file: str = "cumulative_result_plot.png"
 
 
-def compute_cumulative_result(array: np.ndarray) -> np.ndarray:
-    cumulative_result = []
+def compute_cumulative_result(array: jax.Array) -> jax.Array:
+    def body_fun(carry, x):
+        i, current_cumulative_value = carry
+        new_cumulative_value = current_cumulative_value + x
 
-    for i, element in enumerate(array):
-        if len(cumulative_result) == 0:
-            cumulative_result.append(element)
-        else:
-            cumulative_result.append(cumulative_result[-1] + element)
+        def print_result(args):
+            jax.debug.print(
+                "Iteration {}: Current cumulative value: {}", args[0], args[1]
+            )
+            return args
 
-        if i % 10 == 0:
-            print(f"Current cumulative sum: {cumulative_result[-1]}")
+        _ = jax.lax.cond(
+            i % 10 == 0, lambda args: print_result(args), lambda args: args, (i, new_cumulative_value)
+        )
 
-    return np.array(cumulative_result)
+        return (i + 1, new_cumulative_value), new_cumulative_value
+
+    _, cumulative_result = jax.lax.scan(body_fun, (0, 1e-8), array)
+    return cumulative_result
+
+
+@jax.jit
+def jitted_compute_cumulative_result(array: jax.Array) -> jax.Array:
+    return compute_cumulative_result(array)
 
 
 def main(args: Args):
-    array_to_sum = (
-        np.random.randint(-100, 100, args.num_elements) + 1e-6
-    )  # add a small value to exclude zeros.
-    cumulative_arr_sum = compute_cumulative_result(array_to_sum)
+    rng = jax.random.PRNGKey(42)
+    initial_array = (
+        jax.random.uniform(rng, (args.num_elements,), minval=-100, maxval=100) + 1e-6
+    )
+    cumulative_arr_result = jitted_compute_cumulative_result(initial_array)
 
-    print(f"Final cumulative sum: {cumulative_arr_sum[-1]}")
+    print(f"Final cumulative value: {cumulative_arr_result[-1]}")
 
     # Create a new figure
     plt.figure(figsize=(10, 6))
-    plot_results(cumulative_arr_sum)
+    plot_results(cumulative_arr_result, "Cumulative Sum")
 
     # Save the figure
     plt.savefig(args.output_file)
-    plt.close()  # Close the figure to free up memory
+    plt.close()
 
     print(f"Plot saved as '{args.output_file}'")
 
