@@ -16,7 +16,7 @@ class Args:
 def compute_cumulative_result(array: jax.Array) -> jax.Array:
     def body_fun(carry, x):
         i, current_cumulative_value = carry
-        new_cumulative_value = current_cumulative_value - x
+        new_cumulative_value = current_cumulative_value + x
 
         def print_result(args):
             jax.debug.print(
@@ -50,7 +50,7 @@ def main(args: Args):
 
     # Create a new figure
     plt.figure(figsize=(10, 6))
-    plot_results(cumulative_arr_result, "Cumulative Subtraction")
+    plot_results(cumulative_arr_result, "Cumulative Sum")
 
     # Save the figure
     plt.savefig(args.output_file)
