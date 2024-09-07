@@ -16,7 +16,7 @@ class Args:
 def compute_cumulative_result(array: jax.Array) -> jax.Array:
     def body_fun(carry, x):
         i, current_cumulative_value = carry
-        new_cumulative_value = current_cumulative_value + x
+        new_cumulative_value = current_cumulative_value - x
 
         def print_result(args):
             jax.debug.print(
@@ -25,7 +25,10 @@ def compute_cumulative_result(array: jax.Array) -> jax.Array:
             return args
 
         _ = jax.lax.cond(
-            i % 10 == 0, lambda args: print_result(args), lambda args: args, (i, new_cumulative_value)
+            i % 10 == 0,
+            lambda args: print_result(args),
+            lambda args: args,
+            (i, new_cumulative_value),
         )
 
         return (i + 1, new_cumulative_value), new_cumulative_value
@@ -50,7 +53,7 @@ def main(args: Args):
 
     # Create a new figure
     plt.figure(figsize=(10, 6))
-    plot_results(cumulative_arr_result, "Cumulative Sum")
+    plot_results(cumulative_arr_result, "Cumulative Subtraction")
 
     # Save the figure
     plt.savefig(args.output_file)
